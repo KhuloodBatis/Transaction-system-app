@@ -2,10 +2,11 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Admin\RegisterController;
+use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\Customer\RegisterController as CustomerRegisterController;
-use App\Http\Controllers\Admin\RoleController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,10 +27,10 @@ Route::post('login', [LoginController::class, 'login']);
 
 Route::prefix('admin')->group(function () {
     Route::post('register', [RegisterController::class, 'register']);
-
+    Route::post('roles', [RoleController::class, 'store']);
+    
     Route::middleware('auth:sanctum')->group(function () {
-        Route::post('roles', [RoleController::class, 'store']);
-
+        Route::post('add-transaction', [TransactionController::class, 'store']);
     });
 });
 
@@ -37,7 +38,5 @@ Route::prefix('Customer')->group(function () {
     Route::post('register', [CustomerRegisterController::class, 'register']);
 
     Route::middleware('auth:sanctum')->group(function () {
-
     });
 });
-
