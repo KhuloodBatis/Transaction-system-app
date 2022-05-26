@@ -14,6 +14,7 @@ class Transaction extends Model
 
     protected $fillable = [
         'payer',
+        'category',
         'amount',
         'status',
         'due_on'
@@ -27,6 +28,6 @@ class Transaction extends Model
 
     public function categories(): BelongsToMany
     {
-        return $this->belongsToMany(Category::class, 'category_transaction');
+        return $this->belongsToMany(Category::class, 'category_transaction', 'transaction_id', 'category_id');
     }
 }
