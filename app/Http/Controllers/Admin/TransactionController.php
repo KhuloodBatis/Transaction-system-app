@@ -15,9 +15,9 @@ class TransactionController extends Controller
     {
         $request->validate([
             'payer'    => ['required', 'integer', 'exists:users,id'],
-            'category' => ['required', 'integer', 'exists:categories,id'],
+            'category' => ['required',  'integer', 'exists:categories,id'],
             'amount'   => ['required', 'integer'],
-            'status'   => ['required', 'alpha'],
+            'status'   => ['required_with:Paid,Outstanding,Overdue', 'alpha'],
             'due_on'   => ['required', 'date:y-m-d'],
         ]);
         $transaction = Transaction::create([

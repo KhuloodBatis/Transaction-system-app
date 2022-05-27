@@ -12,11 +12,11 @@ class CategoryController extends Controller
     public function store(Request $request, Category $category)
     {
         $request->validate([
-            'title' => ['required', 'string'],
+            'title'     => ['required', 'string'],
             'parent_id' => ['nullable', 'exists:categories,id']
         ]);
         $category = Category::create([
-            'title' => $request->title,
+            'title'     => $request->title,
             'parent_id' => $request->parent_id
         ]);
         return new CategoryResource($category);
@@ -25,7 +25,7 @@ class CategoryController extends Controller
     public function show(Category $category)
     {
         //dd($category);
-       // return $category->load('parent');
-       return new CategoryResource($category);
+        // return $category->load('parent');
+        return new CategoryResource($category);
     }
 }
