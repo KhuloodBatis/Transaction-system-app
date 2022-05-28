@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\RegisterController;
+use App\Http\Controllers\Customer\PaymentController;
 use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\Customer\RegisterController as CustomerRegisterController;
 
@@ -38,10 +39,11 @@ Route::prefix('admin')->group(function () {
     });
 });
 
-Route::prefix('Customer')->group(function () {
+Route::prefix('customer')->group(function () {
     Route::post('register', [CustomerRegisterController::class, 'register']);
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('show-categories/{category}', [CategoryController::class, 'show']);
+        Route::post('payments', [PaymentController::class, 'store']);
     });
 });

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('payer');
             $table->decimal('amount', 8, 2);
+            //the status must be solve based on the payment i think 
             $table->string('status');
             $table->date('due_on');
             $table->timestamps();
