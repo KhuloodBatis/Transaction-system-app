@@ -18,7 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('transaction_id');
             $table->decimal('amount', 8, 2);
             $table->string('payment_method');
-            $table->date('paud_at');
+            $table->date('paid_at');
             $table->string('details');
             $table->timestamps();
         });

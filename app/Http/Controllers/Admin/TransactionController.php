@@ -14,10 +14,8 @@ use App\Http\Resources\Transaction\TransactionResource;
 class TransactionController extends Controller
 {
     public function store(Request $request)
-    {     $data = $request->all();
-        //   $num = 0.00;
-        //   $am = $num /3;
-        //   $data['amount'] = $am;
+    {
+        $data = $request->all();
 
         // if ($data['amount'] > Payment::amunt() )
         //      $data['status'] = 'Overdue';
@@ -26,27 +24,39 @@ class TransactionController extends Controller
         //      else
         //      $data['amount'] = 'Paid';
 
-          Validator::make($data, [
-            'payer'       => ['required','integer','exists:users,id'],
-            'category'    => ['required','integer','exists:categories,id'],
-            'subcategory' => ['required','integer','exists:categories,id'],
-            'amount'      => ['required','numeric'],
-            'status'      => ['exclude_with:Paid,Outstanding,Overdue', 'string'],
-            'due_on'      => ['required','date:y-m-d'],
-            ])->validate();
+        $today = today();
+        switch (connection_status()) {
+            case $data['due_on'] < $today:
+                $txt = 'Paid';
+                break;
+            case $data['due_on']:
+                $txt = 'Outstanding' <= $today;
+                break;
+            case $data['due_on'] > $today:
+                $txt = 'Overdue';
+                break;
+            default:
+                $txt = 'Unknown';
+                break;
+        }
+        $data['status'] = $txt;
+
+        Validator::make($data, [
+            'payer_id'       => ['required', 'integer', 'exists:users,id'],
+            'category_id'    => ['required', 'integer', 'exists:categories,id'],
+            'subcategory_id' => ['required', 'integer', 'exists:categories,id'],
+            'amount'         => ['required', 'numeric'],
+            'status'         => ['regex:/Paid||Outstanding||Overdue/', 'string'],
+            'due_on'         => ['required', 'date:y-m-d'],
+        ])->validate();
         $transaction = Transaction::create([
-            'payer'       => $data['payer'],
-            'category'    => $data['category'],
-            //the subcategory must be solve based on the select category parent
-            'subcategory' => $data['subcategory'],
-            'amount'      => $data['amount'],
-            'status'      => $data['status'],
-            'due_on'      => $data['due_on'],
+            'payer_id'       => $data['payer_id'],
+            'category_id'    => $data['category_id'],
+            'subcategory_id' => $data['subcategory_id'],
+            'amount'         => $data['amount'],
+            'status'         => $data['status'],
+            'due_on'         => $data['due_on'],
         ]);
-
-        $transaction->categories()->attach($request->category);
-        $transaction->subcategories()->attach($request->subcategory);
-
         return response()->json([
             'message' => 'sccessfull',
             'result' => new TransactionResource($transaction)

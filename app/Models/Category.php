@@ -15,9 +15,9 @@ class Category extends Model
         'title', 'parent_id'
     ];
 
-    public function transactions(): BelongsToMany
+    public function transactions(): HasMany
     {
-        return $this->belongsToMany(Transaction::class, 'category_transaction');
+        return $this->hasMany(Transaction::class);
     }
 
 
