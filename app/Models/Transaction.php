@@ -14,7 +14,9 @@ class Transaction extends Model
     use HasFactory;
 
     protected $fillable = [
-        'payer',
+        'payer_id',
+        'category_id',
+        'subcategory_id',
         'amount',
         'status',
         'due_on'
@@ -22,23 +24,19 @@ class Transaction extends Model
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'payer', 'id');
+        return $this->belongsTo(User::class, 'payer_id', 'id');
     }
 
 
 
-    public function categories(): BelongsToMany
+    public function category(): BelongsTo
     {
-        return $this->belongsToMany(Category::class, 'category_transaction', 'transaction_id', 'category_id');
+        return $this->belongsTo(Category::class);
     }
 
-    public function subcategories(): BelongsToMany
+    public function subcategory(): BelongsTo
     {
-        return $this->belongsToMany(Category::class, 'category_transaction', 'transaction_id', 'category_id');
-        //i tried to select subcategory based on the selected category 
-        // ->whereHas('category.parnt', function ($query){
-        //     $query->where('parent_id',Category::id());
-        // });
+        return $this->belongsTo(Category::class);
     }
 
 

@@ -15,9 +15,10 @@ return new class extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('payer');
+            $table->unsignedBigInteger('payer_id');
             $table->decimal('amount', 8, 2);
-            //the status must be solve based on the payment i think 
+            $table->unsignedBigInteger('category_id');
+            $table->unsignedBigInteger('subcategory_id');
             $table->string('status');
             $table->date('due_on');
             $table->timestamps();

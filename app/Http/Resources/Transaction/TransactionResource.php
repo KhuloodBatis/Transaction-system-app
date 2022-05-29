@@ -17,12 +17,13 @@ class TransactionResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id'         => $this->id,
-            'payer'      => new UserResource($this->user),
-            'categories' => CategoryResource::collection($this->categories),
-            'amount'     => $this->amount,
-            'status'     => $this->status,
-            'due_on'     => $this->due_on
+            'id'               => $this->id,
+            'payer_id'         => new UserResource($this->user),
+            'category_id'      => new CategoryResource($this->category),
+            'subcategory_id'   => new CategoryResource($this->subcategory),
+            'amount'           => $this->amount,
+            'status'           => $this->status,
+            'due_on'           => $this->due_on
         ];
     }
 }

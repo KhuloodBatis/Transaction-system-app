@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\User;
+use App\Rules\PhoneNumber;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
@@ -15,14 +16,14 @@ class RegisterController extends Controller
     {
         $data = $request->all();
 
-        $num4 = "00966";
-        $lastNumMobile = $num4 . substr($data['mobile'], -9);
-        $data['mobile'] = $lastNumMobile;
-
+        // $num4 = "00966";
+        // $lastNumMobile = $num4 . substr($data['mobile'], -9);
+        // $data['mobile'] = $lastNumMobile;
+        //I can use 'regex:/(01)[0-9]{9}/'
         Validator::make($data, [
             'name'     => ['required', 'string'],
             'email'    => ['required', 'email', 'unique:users,email'],
-            'mobile'   => ['required', 'string', 'min:10'],
+            'mobile'   => ['required',new PhoneNumber],
             'password' => ['required', Password::min(8)->mixedCase()],
         ])->validate();
 
