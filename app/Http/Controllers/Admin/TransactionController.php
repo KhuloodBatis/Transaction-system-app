@@ -6,6 +6,7 @@ use App\Models\Payment;
 use App\Models\Category;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\Category\CategoryResource;
@@ -24,7 +25,7 @@ class TransactionController extends Controller
         //      else
         //      $data['amount'] = 'Paid';
 
-        // $today = today();
+       // $today = today();
         // switch (connection_status() ) {
         //     case $data['due_on'] < $today:
         //         $txt = 'Paid';
@@ -40,7 +41,29 @@ class TransactionController extends Controller
         //         break;
         // }
         // $data['status'] = $txt;
-        $data['status'] = c;
+        //////////////////
+        // SELECT
+        //    case
+        //          when  (sum(p.amount) < t.amount) AND t.due_on < now() then 'Overdue'
+        //          when  (sum(p.amount) <= t.amount) AND t.due_on > now() then 'Outstanding'
+        //        ELSE 'paid'
+	    //     END AS status
+        // FROM
+        //       transactions t
+        //         JOIN
+        //       payments p ON t.id = p.transaction_id
+        // WHERE t.id = 2 AND p.buyer_id = 1;
+
+        $data['status'] = DB::table('transactions as t')
+          ->selectRaw(" case
+                         when  (sum(p.amount) < t.amount) AND t.due_on < now() then 'Overdue'
+                         when  (sum(p.amount) <= t.amount) AND t.due_on > now() then 'Outstanding'
+                       ELSE 'paid'
+	                   END AS status")
+         ->join('payments p','t.id','=','p.transaction_id')
+         ->where('t.id ,'. Transaction::id().',p.buyer_id, '. Payment::buyer_id())
+         ->get();
+
 
 
         Validator::make($data, [
