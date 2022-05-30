@@ -24,22 +24,24 @@ class TransactionController extends Controller
         //      else
         //      $data['amount'] = 'Paid';
 
-        $today = today();
-        switch (connection_status()) {
-            case $data['due_on'] < $today:
-                $txt = 'Paid';
-                break;
-            case $data['due_on']:
-                $txt = 'Outstanding' <= $today;
-                break;
-            case $data['due_on'] > $today:
-                $txt = 'Overdue';
-                break;
-            default:
-                $txt = 'Unknown';
-                break;
-        }
-        $data['status'] = $txt;
+        // $today = today();
+        // switch (connection_status() ) {
+        //     case $data['due_on'] < $today:
+        //         $txt = 'Paid';
+        //         break;
+        //     case $data['due_on']:
+        //         $txt = 'Outstanding' <= $today;
+        //         break;
+        //     case $data['due_on'] > $today:
+        //         $txt = 'Overdue';
+        //         break;
+        //     default:
+        //         $txt = 'Unknown';
+        //         break;
+        // }
+        // $data['status'] = $txt;
+        $data['status'] = c;
+
 
         Validator::make($data, [
             'payer_id'       => ['required', 'integer', 'exists:users,id'],

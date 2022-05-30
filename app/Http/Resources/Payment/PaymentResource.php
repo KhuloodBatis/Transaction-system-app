@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Payment;
 
 use App\Http\Resources\Transaction\TransactionResource;
+use App\Http\Resources\User\UserResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class PaymentResource extends JsonResource
@@ -17,9 +18,10 @@ class PaymentResource extends JsonResource
     {
         return [
             'transaction'    => new TransactionResource($this->transaction),
+            'buyer_id'       => new UserResource($this->user),
             'amount'         => $this->amount,
             'payment_method' => $this->payment_method,
-            'paud_at'        => $this->paud_at,
+            'paid_at'        => $this->paid_at,
             'details'        => $this->details,
         ];
     }

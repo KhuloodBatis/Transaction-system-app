@@ -18,18 +18,19 @@ class PaymentController extends Controller
         //   $data['amount'] = $am;
 
         Validator::make($data, [
-            'transaction_id' => ['required','integer','exists:transactions,id'],
-            'amount'         => ['required','numeric'],
-            'payment_method' => ['required','string', 'required_with:PayPal,Visa'],
-            'paud_at'        => ['required','date:y-m-d'],
-            'details'        => ['required','string'],
-            ])->validate();
+            'transaction_id' => ['required', 'integer', 'exists:transactions,id'],
+            'buyer_id'       => ['required', 'integer', 'exists:users,id'],
+            'amount'         => ['required', 'numeric'],
+            'payment_method' => ['required', 'string', 'required_with:PayPal,Visa'],
+            'paid_at'        => ['required', 'date:y-m-d'],
+            'details'        => ['required', 'string'],
+        ])->validate();
         $payment = Payment::create([
             'transaction_id' => $data['transaction_id'],
-            //I must divied the amount for 3 items payments for example
+            'buyer_id'       => $data['buyer_id'],
             'amount'         => $data['amount'],
             'payment_method' => $data['payment_method'],
-            'paud_at'        => $data['paud_at'],
+            'paid_at'        => $data['paid_at'],
             'details'        => $data['details'],
         ]);
 
