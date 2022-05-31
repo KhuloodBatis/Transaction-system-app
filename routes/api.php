@@ -46,6 +46,7 @@ Route::prefix('customer')->group(function () {
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('categories/{category}', [CategoryController::class, 'show']);
+        Route::get('payments', [PaymentController::class, 'index']);
         Route::post('payments', [PaymentController::class, 'store']);
     });
 });

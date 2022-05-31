@@ -3,19 +3,27 @@
 namespace App\Http\Controllers\Customer;
 
 use App\Models\Payment;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\Payment\PaymentResource;
 
 class PaymentController extends Controller
 {
+
+    public function index()
+    {
+
+        $payments = Payment::all();
+        return PaymentResource::collection($payments);
+    }
+
     public function store(Request $request)
     {
         $data = $request->all();
-        //   $num = 0.00;
-        //   $am = $num /3;
-        //   $data['amount'] = $am;
 
         Validator::make($data, [
             'transaction_id' => ['required', 'integer', 'exists:transactions,id'],
@@ -24,6 +32,7 @@ class PaymentController extends Controller
             'payment_method' => ['required', 'string', 'required_with:PayPal,Visa'],
             'paid_at'        => ['required', 'date:y-m-d'],
             'details'        => ['required', 'string'],
+            // 'status'         => ['string'],
         ])->validate();
         $payment = Payment::create([
             'transaction_id' => $data['transaction_id'],
@@ -32,7 +41,33 @@ class PaymentController extends Controller
             'payment_method' => $data['payment_method'],
             'paid_at'        => $data['paid_at'],
             'details'        => $data['details'],
+            //'status'         => $data['status'],
         ]);
+
+
+        // $payment->transaction()->DB::update('update transactions set status = ?',[DB::table('transactions as t')
+        //     ->selectRaw(" case
+        //               when  (sum(p.amount) < t.amount) AND t.due_on < now() then 'Overdue'
+        //               when  (sum(p.amount) <= t.amount) AND t.due_on > now() then 'Outstanding'
+        //             ELSE 'paid'
+        //             END AS status")
+        //     ->join('payments as p', 't.id', '=', 'p.transaction_id')
+        //     ->where('t.id =,' . $data['transaction_id'] . ' and p.buyer_id =, ' . Auth::id())
+        //    ])->get();
+
+        //$payment->transaction()->DB::update('update transactions set status = ?',['kool'])->get();
+        //result to searching
+        // 1 $affected = DB::update('update users set votes = 100 where name = ?', ['John']);
+        // 2 DB::insert('insert into users (id, name) values (?, ?)', [1, 'Dayle']);
+        $payment->transaction()->status = DB::table('transactions as t')
+            ->selectRaw(" case
+                         when  (sum(p.amount) < t.amount) AND t.due_on < now() then 'Overdue'
+                         when  (sum(p.amount) <= t.amount) AND t.due_on > now() then 'Outstanding'
+                       ELSE 'paid'
+                       END AS status")
+            ->join('payments as p', 't.id', '=', 'p.transaction_id')
+            ->where('t.id =,' . $data['transaction_id'] . ' and p.buyer_id =, ' . Auth::id())
+            ->get();
 
         return  response()->json([
             'message' => 'sccessfull',

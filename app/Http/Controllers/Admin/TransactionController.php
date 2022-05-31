@@ -25,7 +25,7 @@ class TransactionController extends Controller
         //      else
         //      $data['amount'] = 'Paid';
 
-       // $today = today();
+        // $today = today();
         // switch (connection_status() ) {
         //     case $data['due_on'] < $today:
         //         $txt = 'Paid';
@@ -47,22 +47,23 @@ class TransactionController extends Controller
         //          when  (sum(p.amount) < t.amount) AND t.due_on < now() then 'Overdue'
         //          when  (sum(p.amount) <= t.amount) AND t.due_on > now() then 'Outstanding'
         //        ELSE 'paid'
-	    //     END AS status
+        //     END AS status
         // FROM
         //       transactions t
         //         JOIN
         //       payments p ON t.id = p.transaction_id
         // WHERE t.id = 2 AND p.buyer_id = 1;
 
-        $data['status'] = DB::table('transactions as t')
-          ->selectRaw(" case
-                         when  (sum(p.amount) < t.amount) AND t.due_on < now() then 'Overdue'
-                         when  (sum(p.amount) <= t.amount) AND t.due_on > now() then 'Outstanding'
-                       ELSE 'paid'
-	                   END AS status")
-         ->join('payments p','t.id','=','p.transaction_id')
-         ->where('t.id ,'. Transaction::id().',p.buyer_id, '. Payment::buyer_id())
-         ->get();
+        // $newStatus = DB::table('transactions as t')
+        //     ->selectRaw(" case
+        //                  when  (sum(p.amount) < t.amount) AND t.due_on < now() then 'Overdue'
+        //                  when  (sum(p.amount) <= t.amount) AND t.due_on > now() then 'Outstanding'
+        //                ELSE 'paid'
+	    //                END AS status")
+        //     ->join('payments p', 't.id', '=', 'p.transaction_id')
+        //     ->where('t.id ,' . 'Transaction::id()' . ',p.buyer_id, ' . 'Payment::buyer_id())')
+        //     ->get();
+        // $data['status'] = $newStatus;
 
 
 
@@ -71,7 +72,7 @@ class TransactionController extends Controller
             'category_id'    => ['required', 'integer', 'exists:categories,id'],
             'subcategory_id' => ['required', 'integer', 'exists:categories,id'],
             'amount'         => ['required', 'numeric'],
-            'status'         => ['regex:/Paid||Outstanding||Overdue/', 'string'],
+            'status'         => ['required', 'string'],
             'due_on'         => ['required', 'date:y-m-d'],
         ])->validate();
         $transaction = Transaction::create([
