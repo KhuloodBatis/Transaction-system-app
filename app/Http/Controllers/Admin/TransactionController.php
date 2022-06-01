@@ -59,13 +59,27 @@ class TransactionController extends Controller
         //                  when  (sum(p.amount) < t.amount) AND t.due_on < now() then 'Overdue'
         //                  when  (sum(p.amount) <= t.amount) AND t.due_on > now() then 'Outstanding'
         //                ELSE 'paid'
-	    //                END AS status")
+        //                END AS status")
         //     ->join('payments p', 't.id', '=', 'p.transaction_id')
         //     ->where('t.id ,' . 'Transaction::id()' . ',p.buyer_id, ' . 'Payment::buyer_id())')
         //     ->get();
         // $data['status'] = $newStatus;
-
-
+        //$data['amount'] = round(($data['amount'] / 100) * 3.8, 2); the result is 11.4
+        //new way
+        //The VAT rate percentage.
+        // $vat = 21.5;
+        //The price, excluding VAT.
+        // $priceExcludingVat = 10;
+        //Calculate how much VAT needs to be paid.
+        // $vatToPay = ($priceExcludingVat / 100) * $vat;
+        //The total price, including VAT.
+        //$totalPrice = $priceExcludingVat + $vatToPay;
+        //Print out the final price, with VAT added.
+        //Format it to two decimal places with number_format.
+        // echo number_format($totalPrice, 2);
+        
+        $vat = ($data['amount']/100) * 21.5;
+        $data['amount'] = $data['amount'] + $vat;
 
         Validator::make($data, [
             'payer_id'       => ['required', 'integer', 'exists:users,id'],

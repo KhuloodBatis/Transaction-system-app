@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\RegisterController;
 use App\Http\Controllers\Customer\PaymentController;
@@ -27,6 +28,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::post('login', [LoginController::class, 'login']);
+Route::middleware('auth:sanctum')->post('logout', [LogoutController::class, 'logout']);
 
 Route::prefix('admin')->group(function () {
     Route::post('register', [RegisterController::class, 'register']);
