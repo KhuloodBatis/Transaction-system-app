@@ -8,6 +8,7 @@ use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\Category\CategoryResource;
 use App\Http\Resources\Transaction\TransactionResource;
@@ -18,67 +19,7 @@ class TransactionController extends Controller
     {
         $data = $request->all();
 
-        // if ($data['amount'] > Payment::amunt() )
-        //      $data['status'] = 'Overdue';
-        // else if (2/$data['amount'] = Payment::amunt())
-        //      $data['status'] = 'Outstanding';
-        //      else
-        //      $data['amount'] = 'Paid';
-
-        // $today = today();
-        // switch (connection_status() ) {
-        //     case $data['due_on'] < $today:
-        //         $txt = 'Paid';
-        //         break;
-        //     case $data['due_on']:
-        //         $txt = 'Outstanding' <= $today;
-        //         break;
-        //     case $data['due_on'] > $today:
-        //         $txt = 'Overdue';
-        //         break;
-        //     default:
-        //         $txt = 'Unknown';
-        //         break;
-        // }
-        // $data['status'] = $txt;
-        //////////////////
-        // SELECT
-        //    case
-        //          when  (sum(p.amount) < t.amount) AND t.due_on < now() then 'Overdue'
-        //          when  (sum(p.amount) <= t.amount) AND t.due_on > now() then 'Outstanding'
-        //        ELSE 'paid'
-        //     END AS status
-        // FROM
-        //       transactions t
-        //         JOIN
-        //       payments p ON t.id = p.transaction_id
-        // WHERE t.id = 2 AND p.buyer_id = 1;
-
-        // $newStatus = DB::table('transactions as t')
-        //     ->selectRaw(" case
-        //                  when  (sum(p.amount) < t.amount) AND t.due_on < now() then 'Overdue'
-        //                  when  (sum(p.amount) <= t.amount) AND t.due_on > now() then 'Outstanding'
-        //                ELSE 'paid'
-        //                END AS status")
-        //     ->join('payments p', 't.id', '=', 'p.transaction_id')
-        //     ->where('t.id ,' . 'Transaction::id()' . ',p.buyer_id, ' . 'Payment::buyer_id())')
-        //     ->get();
-        // $data['status'] = $newStatus;
-        //$data['amount'] = round(($data['amount'] / 100) * 3.8, 2); the result is 11.4
-        //new way
-        //The VAT rate percentage.
-        // $vat = 21.5;
-        //The price, excluding VAT.
-        // $priceExcludingVat = 10;
-        //Calculate how much VAT needs to be paid.
-        // $vatToPay = ($priceExcludingVat / 100) * $vat;
-        //The total price, including VAT.
-        //$totalPrice = $priceExcludingVat + $vatToPay;
-        //Print out the final price, with VAT added.
-        //Format it to two decimal places with number_format.
-        // echo number_format($totalPrice, 2);
-        
-        $vat = ($data['amount']/100) * 21.5;
+        $vat = ($data['amount'] / 100) * 21.5;
         $data['amount'] = $data['amount'] + $vat;
 
         Validator::make($data, [
@@ -103,9 +44,22 @@ class TransactionController extends Controller
         ]);
     }
 
+
+
     public function show(Transaction $transaction)
     {
-        //return  $transaction->load('categories');
-        return  new TransactionResource($transaction);
+        $status = DB::table('transactions as t')
+            ->select(DB::raw("case
+         when  (sum(p.amount) < t.amount) AND t.due_on < now() then 'Overdue'
+         when  (sum(p.amount) < t.amount) AND t.due_on > now() then 'Outstanding'
+             ELSE 'paid'
+                END AS status"))
+            ->join('payments as p', 't.id', '=', 'p.transaction_id')
+            ->where('t.id', '=', $transaction->id)
+            ->where('p.buyer_id', '=', Auth::id())
+            ->groupBy('t.id')
+            ->get();
+        return $status;
     }
+
 }

@@ -27,8 +27,6 @@ class Transaction extends Model
         return $this->belongsTo(User::class, 'payer_id', 'id');
     }
 
-
-
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
@@ -39,9 +37,13 @@ class Transaction extends Model
         return $this->belongsTo(Category::class);
     }
 
-
     public function payments(): HasMany
     {
         return $this->hasMany(Payment::class);
+    }
+
+    public function reports(): HasMany
+    {
+        return $this->hasMany(Report::class);
     }
 }

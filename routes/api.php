@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\RegisterController;
 use App\Http\Controllers\Customer\PaymentController;
@@ -40,6 +41,7 @@ Route::prefix('admin')->group(function () {
         Route::post('categories', [CategoryController::class, 'store']);
         Route::post('subcategories', [SubcategoryController::class, 'store']);
         Route::get('categories/{category}', [CategoryController::class, 'show']);
+        Route::post('reports',[ReportController::class,'store']);
     });
 });
 
@@ -48,6 +50,7 @@ Route::prefix('customer')->group(function () {
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('categories/{category}', [CategoryController::class, 'show']);
+        Route::get('transactions/{transaction}', [TransactionController::class, 'show']);
         Route::get('payments', [PaymentController::class, 'index']);
         Route::post('payments', [PaymentController::class, 'store']);
     });

@@ -17,6 +17,8 @@ return new class extends Migration
             $table->id();
             $table->date('starting_date');
             $table->date('ending_date');
+            $table->unsignedBigInteger('transaction_id');
+            $table->unsignedBigInteger('payment_id');
             $table->timestamps();
         });
     }
