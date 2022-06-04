@@ -34,7 +34,7 @@ class Transaction extends Model
 
     public function subcategory(): BelongsTo
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(Category::class,'parent_id');
     }
 
     public function payments(): HasMany

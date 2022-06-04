@@ -37,11 +37,11 @@ Route::prefix('admin')->group(function () {
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('transactions', [TransactionController::class, 'store']);
-        Route::get('transactions/{transaction}', [TransactionController::class, 'show']);
         Route::post('categories', [CategoryController::class, 'store']);
         Route::post('subcategories', [SubcategoryController::class, 'store']);
         Route::get('categories/{category}', [CategoryController::class, 'show']);
         Route::post('reports',[ReportController::class,'store']);
+        Route::get('reports',[ReportController::class,'index']);
     });
 });
 
@@ -49,7 +49,7 @@ Route::prefix('customer')->group(function () {
     Route::post('register', [CustomerRegisterController::class, 'register']);
 
     Route::middleware('auth:sanctum')->group(function () {
-        Route::get('categories/{category}', [CategoryController::class, 'show']);
+        Route::get('transactions', [TransactionController::class, 'index']);
         Route::get('transactions/{transaction}', [TransactionController::class, 'show']);
         Route::get('payments', [PaymentController::class, 'index']);
         Route::post('payments', [PaymentController::class, 'store']);

@@ -15,10 +15,15 @@ use App\Http\Resources\Transaction\TransactionResource;
 
 class TransactionController extends Controller
 {
+    public function index(Transaction $transactions)
+    {
+        $transactions = Transaction::paginate(4);
+        return $transactions;
+    }
+
     public function store(Request $request)
     {
         $data = $request->all();
-
         $vat = ($data['amount'] / 100) * 21.5;
         $data['amount'] = $data['amount'] + $vat;
 
@@ -44,14 +49,15 @@ class TransactionController extends Controller
         ]);
     }
 
-
-
     public function show(Transaction $transaction)
     {
+        // return $transaction->payments
+        // ->where('id', 7)->update(['ali' => 'hello' ]);
+
         $status = DB::table('transactions as t')
             ->select(DB::raw("case
-         when  (sum(p.amount) < t.amount) AND t.due_on < now() then 'Overdue'
-         when  (sum(p.amount) < t.amount) AND t.due_on > now() then 'Outstanding'
+                when  (sum(p.amount) < t.amount) AND t.due_on < now() then 'Overdue'
+                when  (sum(p.amount) < t.amount) AND t.due_on > now() then 'Outstanding'
              ELSE 'paid'
                 END AS status"))
             ->join('payments as p', 't.id', '=', 'p.transaction_id')
