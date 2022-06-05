@@ -16,63 +16,18 @@ class ReportController extends Controller
 {
     public function index(Transaction $transaction)
     {
-        // 11 [
-        //     { " month " : " 1 " ,
-        //       " year " : " 2021 " ,
-        //       " paid " : " 20000 " ,
-        //       " outstanding " : " 1000 " ,
-        //       " overdue " : " 10.5 "
-        //    } ,
-        //    {
-        //     " month " : " 2 " ,
-        //     " year " : " 2021 " ,
-        //     " paid " : " 0 " ,
-        //     " outstanding " : " 1000 " ,
-        //     " overdue " : " 5.5 "
-        //    }]
 
-        //    $categories = Category::where('parent_id',null)
-        //    ->with(['subcategories'=> function($query){
-        //        $query->withSum(['payments'=> function($query){
-        //            $query->where('paid_at','>', now()->subMonth(value:3));
-        //        }], 'amount');
-        //    }])
-        //    ->get();
-        //    return $categories;
+        $reports = Transaction::select(
+            DB::raw('month(due_on) as month'),
+            DB::raw('year(due_on) as year'),
+            DB::raw('sum(case when STATUS = "paid" then amount ELSE 0 end )AS paid'),
+            DB::raw('sum(case when STATUS = "outstanding" then amount ELSE 0 end )AS outstanding'),
+            DB::raw('sum(case when STATUS = "overdue" then amount ELSE 0 end )AS overdue'),)
+        ->groupBy(['month','year'])
+        ->get()
+        ->toArray();
 
-        //    $transactions = Transaction::where('id',Auth::id())
-        //    ->withSum(['payments'=> function($query){
-        //            $query->where('paid_at','>', now()->subMonth(value:3));
-        //        }], 'amount')
-        //    ->get();
-        //    return $transactions;
-
-        //     SELECT
-        // 	EXTRACT(MONTH FROM p.paid_at) AS month,
-        //    EXTRACT(YEAR FROM p.paid_at) AS year,
-        //    t.amount AS paid,
-        //    max(p.amount) AS outstanding,
-        //   round(MIN(p.amount)/95,1) AS overdue
-        // FROM
-        //   payments p
-        //    JOIN
-        //   transactions t ON t.id = p.transaction_id
-        // WHERE t.id = 2 AND p.buyer_id =1;
-
-        $payments = DB::table('payments as p')
-            ->select(DB::raw("p.id,
-                     EXTRACT(MONTH FROM p.paid_at) AS month,
-                     EXTRACT(YEAR FROM p.paid_at) AS year,
-                     t.amount AS paid,
-                     max(p.amount) AS outstanding,
-                     round(MIN(p.amount)/95,1) AS overdue"))
-            ->join('transactions as t', 't.id', '=', 'p.transaction_id')
-            ->where('t.id', '=', $transaction->id)
-            ->where('p.buyer_id', '=', Auth::id())
-            ->groupBy('p.id')
-            ->get();
-
-        return $payments;
+         return $reports;
     }
 
     public function store(Request $request)

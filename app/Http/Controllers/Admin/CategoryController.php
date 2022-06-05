@@ -24,8 +24,6 @@ class CategoryController extends Controller
 
     public function show(Category $category)
     {
-        //dd($category);
-        // return $category->load('parent');
         return new CategoryResource($category);
     }
 }
