@@ -35,7 +35,7 @@ Route::post('logout', [LogoutController::class, 'logout'])->middleware('auth:san
     Route::prefix('admin')->group(function () {
         Route::post('register', [RegisterController::class, 'register']);
         Route::post('roles', [RoleController::class, 'store']);
-        Route::middleware('auth:sanctum')->group(function () {
+        Route::middleware(['auth:sanctum','role:admin'])->group(function () {
             Route::get('transactions', [TransactionController::class, 'index']);
             Route::post('transactions', [TransactionController::class, 'store']);
             Route::get('transactions/{transaction}', [TransactionController::class, 'show']);
@@ -51,7 +51,7 @@ Route::post('logout', [LogoutController::class, 'logout'])->middleware('auth:san
 
     Route::prefix('customer')->group(function () {
         Route::post('register', [CustomerRegisterController::class, 'register']);
-        Route::middleware('auth:sanctum')->group(function () {
+        Route::middleware(['auth:sanctum','role:customer'])->group(function () {
         Route::get('transactions/{transaction}', [ShowTransationController::class, 'show']);
     });
 });
