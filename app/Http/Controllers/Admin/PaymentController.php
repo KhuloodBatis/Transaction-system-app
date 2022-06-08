@@ -16,12 +16,9 @@ class PaymentController extends Controller
 
     public function index()
     {
-
         // $payments = Payment::all();
-        // return PaymentResource::collection($payments);
-
+       // return PaymentResource::collection($payments);
     }
-
     public function store(Request $request)
     {
 
@@ -41,7 +38,7 @@ class PaymentController extends Controller
         ]);
 
         return  response()->json([
-            'message' => 'sccessfull',
+            'message' => 'successfull',
             'result' => new PaymentResource($payment)
         ]);
     }

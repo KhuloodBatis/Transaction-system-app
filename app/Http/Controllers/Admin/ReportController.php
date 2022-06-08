@@ -27,7 +27,12 @@ class ReportController extends Controller
         ->get()
         ->toArray();
 
-         return $reports;
+         return  response()->json([
+            'status' => 'successful',
+            'message' => $reports,
+        ]);
+
+    
     }
 
     public function store(Request $request)
@@ -44,6 +49,9 @@ class ReportController extends Controller
             'transaction_id' => $request->transaction_id,
             'payment_id'     => $request->payment_id,
         ]);
-        return new ReportResource($report);
+        return response()->json([
+            'message' => 'sccessfull',
+            'result' => new ReportResource($report)
+        ]); 
     }
 }
