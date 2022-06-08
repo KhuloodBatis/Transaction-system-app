@@ -51,6 +51,7 @@ Route::post('logout', [LogoutController::class, 'logout'])->middleware('auth:san
 
     Route::prefix('customer')->group(function () {
         Route::post('register', [CustomerRegisterController::class, 'register']);
+        
         Route::middleware(['auth:sanctum','role:customer'])->group(function () {
         Route::get('transactions/{transaction}', [ShowTransationController::class, 'show']);
     });
