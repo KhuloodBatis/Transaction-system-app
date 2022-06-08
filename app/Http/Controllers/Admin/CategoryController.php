@@ -18,8 +18,12 @@ class CategoryController extends Controller
         $category = Category::create([
             'title'     => $request->title,
             'parent_id' => $request->parent_id
+        ]); 
+
+        return  response()->json([
+            'status' => 'successful',
+            'message' => new CategoryResource($category),
         ]);
-        return new CategoryResource($category);
     }
 
     public function show(Category $category)

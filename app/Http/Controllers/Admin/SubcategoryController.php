@@ -9,16 +9,19 @@ use App\Http\Resources\Category\CategoryResource;
 
 class SubcategoryController extends Controller
 {
-    public function store(Request $request, Category $category)
+    public function store(Request $request, Category $subcategory)
     {
         $request->validate([
             'title'     => ['required', 'string'],
             'parent_id' => ['required', 'exists:categories,id']
         ]);
-        $category = Category::create([
+        $subcategory = Category::create([
             'title'     => $request->title,
             'parent_id' => $request->parent_id
         ]);
-        return new CategoryResource($category);
+        return  response()->json([
+            'status' => 'successful',
+            'message' => new CategoryResource($subcategory),
+        ]);
     }
 }

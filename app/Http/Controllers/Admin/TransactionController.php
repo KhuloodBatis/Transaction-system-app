@@ -59,7 +59,11 @@ class TransactionController extends Controller
             ->where('t.id', '=', $transaction->id)
             ->groupBy('t.id')
             ->get();
-        return $status;
+
+        return  response()->json([
+            'status' => 'successful',
+            'message' => $status,
+        ]);
     }
 
 }
