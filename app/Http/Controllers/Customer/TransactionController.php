@@ -11,9 +11,19 @@ use Illuminate\Support\Facades\Auth;
 class TransactionController extends Controller
 {
     public function show(Transaction $transaction)
-    {
+    {  
         $transaction = Transaction::where('payer_id',Auth::id())->get();
-        return new TransactionResource($transaction);
+       if(!$transaction ) {
+          return  response()->json([
+            'status' => 'successful',
+            'result' =>TransactionResource::collection($transaction),
+              ]);
+       };
 
+       return  response()->json([
+        'status' => 'unsuccessful',
+        'message' => 'you don`t have any transactions',
+    ]);
+         
     }
 }
