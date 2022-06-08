@@ -2,21 +2,23 @@
 
 namespace App\Http\Controllers\Admin;
 
-
+use App\Models\Payment;
+use App\Models\Category;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Resources\Category\CategoryResource;
 use App\Http\Resources\Transaction\TransactionResource;
-
 
 class TransactionController extends Controller
 {
     public function index(Transaction $transactions)
     {
         $transactions = Transaction::paginate(4);
-        return TransactionResource::collection($transactions);
+        return $transactions;
     }
 
     public function store(Request $request)
@@ -49,6 +51,9 @@ class TransactionController extends Controller
 
     public function show(Transaction $transaction)
     {
+        // return $transaction->payments
+        // ->where('id', 7)->update(['ali' => 'hello' ]);
+
         $status = DB::table('transactions as t')
             ->select(DB::raw("case
                 when  (sum(p.amount) < t.amount) AND t.due_on < now() then 'Overdue'
@@ -57,6 +62,7 @@ class TransactionController extends Controller
                 END AS status"))
             ->join('payments as p', 't.id', '=', 'p.transaction_id')
             ->where('t.id', '=', $transaction->id)
+            ->where('p.buyer_id', '=', Auth::id())
             ->groupBy('t.id')
             ->get();
         return $status;

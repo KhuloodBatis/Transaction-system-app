@@ -12,6 +12,7 @@ class Payment extends Model
     use HasFactory;
     protected $fillable = [
         'transaction_id',
+        'buyer_id',
         'amount',
         'payment_method',
         'paid_at',
@@ -24,7 +25,7 @@ class Payment extends Model
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class,'id');
+        return $this->belongsTo(User::class, 'buyer_id', 'id');
     }
     public function reports(): HasMany
     {

@@ -34,7 +34,6 @@ class RegisterController extends Controller
         ]);
 
         $user->assignRole('admin');
-
         $token = $user->createToken('key')->plainTextToken;
         return response()->json([
             'access_token' => $token
