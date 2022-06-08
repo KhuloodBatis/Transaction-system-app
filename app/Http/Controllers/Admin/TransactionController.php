@@ -62,7 +62,6 @@ class TransactionController extends Controller
                 END AS status"))
             ->join('payments as p', 't.id', '=', 'p.transaction_id')
             ->where('t.id', '=', $transaction->id)
-            ->where('p.buyer_id', '=', Auth::id())
             ->groupBy('t.id')
             ->get();
         return $status;
